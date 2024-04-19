@@ -1,0 +1,204 @@
+INSTALLATION & SETUP
+    - FOLLOW "https://youtu.be/boL3HcPHAaA" for initial Setup of VM & Ubuntu!
+
+    Brief:
+    - Go to Virtual Box (Oracle) site, & download the latest version.
+    - Which version of ROS to install?
+        > To know which versions are available -> go to "wiki.ros.org/Distributions"
+        > Ones in "gray" are expired versions
+        > So Try to go with ones in "green"
+        > Also, Go for the versions with Long Time Support (LTS). What's that?
+            -> Versions with >= 5 years of Updation period (from Release data to EOL date)
+            -> Not like "ROS Lunar Loggerhead". It had only 2 years updation period
+        > Then go to installation page
+        -> Go on to install ROS for "Ubuntu" (bcoz most stable for this OS)
+    - Now, Download the Ubunbtu version supported by your desired ROS version
+        > Open your VIRTUAL MACHINE. i.e. make the setup for Ubuntu on the Virtual MACHINE
+        > (We'll install ROS on our Virtual Machine)
+        > FOLLOW "https://youtu.be/Qk4vLFhvfbI" for the ROS Installation on VM
+            -> FUN FACT: use "CTRL + INSERT" for Copy & "SHIFT + INSERT" for Paste in Ubuntu Linux
+            -> NOTE:
+                > use "sudo apt install ros-noetic-desktop-full" for installation
+
+        > after the above command, ROS is installed in the system!
+        > before we use ROS, we need to initialize rosedep (ONLY ONCE AFTER INSTALLATION, THAT's IT)
+            -> rosedep allows you to easily install system dependencies for sources you want to compile
+            -> COMMAND: "sudo rosedep init" & "rosedep update"
+
+        > to enable ROS whenever you open your terminal, we need to setup ROS in bash
+            -> COMMAND: "gedit .bashrc"
+                -> in the .bashrc file -> add "source /opt/ros/noetic/setup.bash"
+            -> then close the file & in terminal, COMMAND: "source .bashrc"
+
+        > after all this INSTALLATION Process, we need to create a workspace where to put your proper projects in ROS packages
+            -> create a new Workspace in the home directory
+            -> COMMANDS:
+                $ mkdir -p ~/catkin_ws/src
+                $ cd ~/catkin_ws/
+                $ catkin_make
+            
+            -> then, edit the .bashrc file again,
+                -> where you had written "source /opt/ros/noetic/setup.bash"
+                -> replace it with "source /home/vansh/catkin_ws/devel/setup.bash"
+
+            -> source the .bashrc file
+
+            -> NOW, type "roscd", it'll take you to "/catkin_ws/devel"
+                > this means that the default ROS directory is now catkin_ws !!
+
+    - NOW, Install VS CODE in Ubuntu VM
+        > COMMAND: "sudo snap install code --classic"
+    
+    
+What exactly is Catkin?
+    - Imagine you're building a puzzle. 
+    - Each piece of the puzzle is like a part of your robot's software. 
+    - Catkin is like a special toolbox that helps you organize and put all these puzzle pieces together in the right way. 
+    - It's the way ROS manages and builds your robot's software.
+    - It allows you to build multiple packages in parallel, which is great when your robot's software gets complex.
+
+    - IN SHORT: Catkin is the compilation framework used by ROS
+
+    > Commands:
+        - `catkin_make`: This command is used in the root of your workspace to build all your packages.
+        - `catkin_make package_name`: This command builds only the specified package.
+        - `source devel/setup.bash`: After building, you need to "source" the setup file so that your terminal knows where to find the compiled code.
+
+What are Packages?
+    - Inside your workspace, you have packages. 
+    - These are like smaller boxes where you keep related puzzle pieces. 
+    - For example, one package might hold code for moving the robot, while another might have code for taking pictures.
+
+Here's an example of how you might set up a simple ROS workspace with Catkin:
+
+```
+my_ros_workspace/
+  └── src/
+      ├── CMakeLists.txt (for the whole workspace)
+      ├── package_1/
+      │     ├── CMakeLists.txt (for package_1)
+      │     └── ...
+      ├── package_2/
+      │     ├── CMakeLists.txt (for package_2)
+      │     └── ...
+      └── ...
+```
+
+Building with Catkin:
+    - Catkin uses CMake, a tool that helps you build software, to manage and generate the build files. 
+    - You define how your packages should be built in a `CMakeLists.txt` file within each package.
+
+
+What is CMake (or CMakeLists)?
+    - These files are like instruction manuals for Catkin. 
+    - They tell Catkin how to put your puzzle pieces together. 
+    - The `CMakeLists.txt` file helps Catkin build your code, and the `package.xml` file describes your package and its needs.
+
+
+INSIDE THE WORKSPACE:
+    - in a project workspace, we have three folders initially,
+        > "src"
+            ├── here you put your own ROS packages and source code
+            ├── here you develop your ROS nodes, libraries, and other software components
+            ├── IN SHORT: This is where you put your source code
+
+        > "build"
+            ├── directory is used for building (compiling) your ROS packages
+            ├── you run the "catkin_make" command, 
+                ├── it compiles your source code into executable binaries and libraries
+            ├── IN SHORT: This is where your code is compiled
+
+        > "devel"
+            ├── here the compiled binaries and libraries from the "build" directory are linked
+            ├── When you run ROS nodes, the system looks for the executables and libraries in this directory
+            ├── Any changes you make to your code will be reflected here after running "catkin_make"
+            ├── IN SHORT: This is where your compiled code resides for development and testing purposes within your workspace
+            
+
+AFTER CREATING A WORKSPACE
+    - Recap:
+        > COMMANDS:
+            $ mkdir -p ~/catkin_ws/src
+            $ cd ~/catkin_ws/
+            $ catkin_make
+    
+    - New:
+        > $ cd src/
+        > $ catkin_create_pkg <package_name> [depend1] [depend2] [depend3]
+        > cd ..
+        > catkin_make
+
+    - What did we do?
+        > We went inside the 'src/' folder of the main workspace
+        > We created a new package inside the main project workspace, along with the dependencies needed in the project
+        > We came out of the 'src/' folder of the main workspace
+        > & then we used "catkin_make" to build all the packages of the workspace (like, saving/storing in the build or devel folder of the ws)
+
+    - Now, we can add packages, edit & code python (in the src/scripts folder of package (not main workspace))!
+
+What is a ROS NODE?
+    - Its a software module that performs a specific task in robotic system.
+    - For ex, you might have a node to control the movement of a robot's wheels, another node to process camera data, and so on.
+    - Nodes communicate with each other by sending and receiving messages over topics.
+
+    > What is a TOPIC?
+        - A topic is a named communication channel where nodes can publish messages or subscribe to receive messages.
+        - It's a way for nodes to share data, like sensor readings or commands.
+        - One node publishes data on a topic, and other nodes can subscribe to that topic to receive the data.
+    
+    > What is a MESSAGE?
+        - A message is a data structure used to exchange information between nodes.
+        - For instance, a message could contain sensor readings, commands, or any other type of data.
+
+What is ROS Master? `roscore`
+
+    - The ROS Master is a centralized server that manages the connection between ROS nodes.
+    - It keeps track of which nodes are running and facilitates communication between them.
+    - Nodes register with the ROS Master, making it aware of their existence.
+
+                +-----------------+
+                |    ROS Master   |
+                +-----------------+
+                        |
+              +----------------------+
+              |                      |
+      +-----------+         +------------+
+      | Node A    |         | Node B     |
+      | Publisher |         | Subscriber |
+      +-----------+         +------------+
+      | Publishes |         | Receives   |
+      | Messages  |         | Messages   |
+      +-----------+         +------------+
+          |                      |
+  +-------------------+ +--------------------+
+  |      Topic        | |      Topic         |
+  |  (e.g., Sensor)   | |  (e.g., Commands)  |
+  +-------------------+ +--------------------+
+
+WHEN YOU START "roscore"...
+    -> in another terminal:
+        > "rostopic list" (you'll see `/rosout`)
+        > "rosnode list" (you'll see `/rosout`)
+
+        WHAT IS `rosout`?
+            > It is a special node that listens for log messages from all the other nodes
+            > It's like a central place where nodes can send their log messages, warnings, errors, and other output
+
+            > IN SHORT: 
+                - When a ROS node needs to communicate information, it often uses log messages.
+                - Instead of printing these messages to the console, nodes send them to `rosout`
+
+NOW, after the ROS Master is running...
+    > SYNTAX: "$ rosrun package_name executable_name [options]"
+        -> "rosrun" : used to run a ros node
+        -> "package_name" : name of the package to run
+        -> "executable_name" : name of the executable file inside the package to run
+        -> "[options]" : command-line options that this node might accept
+    
+    > example: "$ rosrun my_robot control_node --speed 0.5 --mode auto"
+
+IMPORTANT NOTE: IF THE PYTHON SCRIPT DOES NOT RUNN, or Throws an error, then type the command:
+    > $ chmod +x /home/vansh/ros/project01/src/talker_listener/src/scripts/talker.py
+    (something similar to that)
+
+    -> Now try to run the script, IT'LL RUN Like Butter!!
